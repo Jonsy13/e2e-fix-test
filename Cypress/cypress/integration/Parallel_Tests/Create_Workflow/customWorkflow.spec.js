@@ -217,7 +217,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("workflowListDetails", "recentRuns");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
@@ -261,7 +261,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("workflowListDetails", "recentRuns");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();

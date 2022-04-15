@@ -232,7 +232,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("workflowListDetails", "recentRuns");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();

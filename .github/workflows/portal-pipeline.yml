@@ -179,6 +179,7 @@ jobs:
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
+          k3d-version: v5.2.2
           args: >
             --agents 3
             --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
