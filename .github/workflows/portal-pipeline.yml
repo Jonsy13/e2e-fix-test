@@ -56,20 +56,20 @@ jobs:
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
 
-      - name: Deploying Prometheus as a DataSource
-        run: |
-          mkdir monitoring && cd monitoring
-          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
-          kubectl create ns monitoring
-          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-          source ../../../litmus/utils.sh
-          wait_for_pods monitoring 720
-          wait_for_loadbalancer prometheus-k8s monitoring
-          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-          DATA_SOURCE="http://$loadBalancerIP:9090"
-          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
+      # - name: Deploying Prometheus as a DataSource
+      #   run: |
+      #     mkdir monitoring && cd monitoring
+      #     git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
+      #     kubectl create ns monitoring
+      #     kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+      #     kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+      #     kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+      #     source ../../../litmus/utils.sh
+      #     wait_for_pods monitoring 720
+      #     wait_for_loadbalancer prometheus-k8s monitoring
+      #     loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+      #     DATA_SOURCE="http://$loadBalancerIP:9090"
+      #     echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
