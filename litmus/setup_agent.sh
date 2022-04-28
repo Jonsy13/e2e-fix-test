@@ -45,7 +45,7 @@ function connect_agent_ns_mode(){
 
     echo $projectName
     
-    projectID=$(eval "litmusctl get projects | awk '/$projectName /'" | awk '{print $1}')
+    projectID=$(litmusctl get projects | grep "$projectName" | awk '{print $1}')
 
     echo $projectID
     
