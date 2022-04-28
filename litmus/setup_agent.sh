@@ -41,7 +41,7 @@ function connect_agent_ns_mode(){
     
     litmusctl config set-account --endpoint=${accessPoint} --username="admin" --password="litmus"
     
-    projectID=$(litmusctl get projects | grep ${projectName} |  awk '{print $1}')
+    projectID=$(eval "litmusctl get projects | grep '${projectName}'" |  awk '{print $1}')
 
     echo $projectID
     
