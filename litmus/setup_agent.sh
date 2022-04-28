@@ -40,8 +40,12 @@ function connect_agent_ns_mode(){
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
     
     litmusctl config set-account --endpoint=${accessPoint} --username="admin" --password="litmus"
+
+    litmusctl get projects
+
+    echo $projectName
     
-    projectID=$(eval "litmusctl get projects | grep '${projectName}'" |  awk '{print $1}')
+    projectID=$(eval "litmusctl get projects | awk '/$projectName /'" | awk '{print $1}')
 
     echo $projectID
     
