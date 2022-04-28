@@ -64,8 +64,9 @@ function wait_for_agent_to_be_ready(){
     verify_all_components subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller ${namespace}
 }
 
-if [[ "$setupCLI" == "true" ]]
+if [[ "$setupCLI" == "true" ]];then
     setup_litmusctl
+fi
 
 if [[ "$installation_mode" == "CS-MODE" ]];then
     connect_agent_cs_mode

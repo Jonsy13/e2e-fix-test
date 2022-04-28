@@ -164,7 +164,7 @@ jobs:
         if: always()
         continue-on-error: false
         with:
-          spec: cypress/integration/Parallel_Tests/**/*.spec.js
+          spec: cypress/integration/Parallel_Tests/Create_Workflow/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
           env: true
@@ -175,7 +175,6 @@ jobs:
           CYPRESS_AGENT_NAMESPACE: "litmus"
           CYPRESS_AGENT: "agent-1"
           CYPRESS_TARGET_APP_NS: "default"
-          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       # TODO: Additional Tests will be added from here
 
