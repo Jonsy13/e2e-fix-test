@@ -41,9 +41,9 @@ function connect_agent_ns_mode(){
     
     litmusctl config set-account --endpoint=${accessPoint} --username="admin" --password="litmus"
     
-    projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
+    # projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
     
-    litmusctl create agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --non-interactive 
+    # litmusctl create agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --non-interactive 
 }
 
 
@@ -77,4 +77,4 @@ else
     exit 1
 fi
 
-wait_for_agent_to_be_ready
+# wait_for_agent_to_be_ready
