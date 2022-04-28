@@ -43,7 +43,7 @@ function connect_agent_ns_mode(){
     
     projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
     
-    litmusctl create agent --agent-name=${namespace} --project-id=${projectID} --non-interactive 
+    litmusctl create agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --non-interactive 
 }
 
 

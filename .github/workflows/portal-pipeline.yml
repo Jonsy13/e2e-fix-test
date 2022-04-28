@@ -124,27 +124,27 @@ jobs:
       #     CYPRESS_TARGET_APP_NS: "default"
       #     CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
-      - uses: AbsaOSS/k3d-action@v2
-        name: Create 2nd Cluster
-        with:
-          cluster-name: ${{ env.EXTERNAL_AGENT }}
-          k3d-version: v5.2.2 #Required for prometheus v1beta1
-          args: --agents 1
+      # - uses: AbsaOSS/k3d-action@v2
+      #   name: Create 2nd Cluster
+      #   with:
+      #     cluster-name: ${{ env.EXTERNAL_AGENT }}
+      #     k3d-version: v5.2.2 #Required for prometheus v1beta1
+      #     args: --agents 1
 
-      - name: Configuring and Testing the Agent Installation
-        run: |
-          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
-          kubectl get nodes
-          kubectl get pods -n kube-system
+      # - name: Configuring and Testing the Agent Installation
+      #   run: |
+      #     kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
+      #     kubectl get nodes
+      #     kubectl get pods -n kube-system
 
-      # Fetching Access Point & Token for accessing kube api server
-      - run: |
-          kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
-          export CLUSTER_NAME=k3d-${{ env.EXTERNAL_AGENT }}
-          KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
-          KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
-          echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
-          echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+      # # Fetching Access Point & Token for accessing kube api server
+      # - run: |
+      #     kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+      #     export CLUSTER_NAME=k3d-${{ env.EXTERNAL_AGENT }}
+      #     KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+      #     KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+      #     echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
+      #     echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
@@ -152,8 +152,8 @@ jobs:
           ./litmus/setup_agent.sh
         env:
           LITMUSCTL_VERSION: ${{ github.event.inputs.litmusctl-version }}
-          AGENT_NAMESPACE: "litmus"
-          INSTALLATION_MODE: "CS-MODE"
+          AGENT_NAMESPACE: "litmus-1"
+          INSTALLATION_MODE: "NS-MODE"
           ACCESS_URL: ${{ env.URL }}
           SETUP_CLI: "true"
           AGENT_NAME: "agent-1"
@@ -172,7 +172,7 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
           CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
-          CYPRESS_AGENT_NAMESPACE: "litmus"
+          CYPRESS_AGENT_NAMESPACE: "litmus-1"
           CYPRESS_AGENT: "agent-1"
           CYPRESS_TARGET_APP_NS: "default"
 
