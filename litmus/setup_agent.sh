@@ -39,7 +39,7 @@ function connect_agent_ns_mode(){
     # Installing CRD's, required for namespaced mode
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
     
-    litmusctl config set-account --endpoint="${accessPoint}" --username="admin" --password="litmus"
+    litmusctl config set-account --endpoint=${accessPoint} --username="admin" --password="litmus"
     
     projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
     
