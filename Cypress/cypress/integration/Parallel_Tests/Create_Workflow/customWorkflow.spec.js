@@ -73,14 +73,14 @@ describe("Testing the validation of the final verdict with an existing target ap
      * add experiment modal
      */
     cy.wait(1000);
-    const experimentArray = [
-      {
-        targetAppNS: targetAppNamespace,
-        label: "app=nginx",
-        experimentName: "pod-delete",
-      },
-    ];
-    cy.validateExperiment(experimentArray);
+    // const experimentArray = [
+    //   {
+    //     targetAppNS: targetAppNamespace,
+    //     label: "app=nginx",
+    //     experimentName: "pod-delete",
+    //   },
+    // ];
+    // cy.validateExperiment(experimentArray);
     cy.get("table").find("tr").eq(1).find("td").eq(0).click();
     const tunningParameters = {
       general: {

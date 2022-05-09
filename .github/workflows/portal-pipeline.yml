@@ -152,11 +152,11 @@ jobs:
           ./litmus/setup_agent.sh
         env:
           LITMUSCTL_VERSION: ${{ github.event.inputs.litmusctl-version }}
-          AGENT_NAMESPACE: "litmus-1"
+          AGENT_NAMESPACE: "cs-1"
           INSTALLATION_MODE: "NS-MODE"
           ACCESS_URL: ${{ env.URL }}
           SETUP_CLI: "true"
-          AGENT_NAME: "agent-1"
+          AGENT_NAME: "Agent-1"
           PROJECT_NAME: "admin's project"
 
       - name: Running Post-Authentication Tests
@@ -172,8 +172,8 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
           CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
-          CYPRESS_AGENT_NAMESPACE: "litmus-1"
-          CYPRESS_AGENT: "agent-1"
+          CYPRESS_AGENT_NAMESPACE: "cs-1"
+          CYPRESS_AGENT: "Agent-1"
           CYPRESS_TARGET_APP_NS: "default"
 
       # TODO: Additional Tests will be added from here
