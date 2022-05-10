@@ -31,7 +31,7 @@ Cypress.Commands.add(
     Experiments
   ) => {
     cy.visit("/workflows");
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.get("[data-cy=runs]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);
@@ -141,7 +141,7 @@ Cypress.Commands.add(
     regularity,
     nextRun
   ) => {
-    cy.GraphqlWait("workflowListDetails", "SelectedWorkflowStats");
+    cy.GraphqlWait("listWorkflows", "SelectedWorkflowStats");
     let workflowId = "";
     let clusterId = "";
     cy.wait("@recentRuns").then((res) => {

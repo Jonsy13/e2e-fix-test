@@ -145,7 +145,7 @@ describe("Testing the validation of the final verdict with an existing target ap
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
@@ -182,7 +182,7 @@ describe("Testing the validation of the final verdict with an existing target ap
   });
 
   it("Validating graph nodes", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.validateWorkflowStatus(workflowName, workflowNamespace, [
@@ -216,7 +216,7 @@ describe("Testing the validation of the final verdict with an existing target ap
   });
 
   it("Testing the workflow statistics", () => {
-    cy.GraphqlWait("workflowListDetails", "recentRuns");
+    cy.GraphqlWait("listWorkflows", "recentRuns");
     cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
@@ -260,7 +260,7 @@ describe("Testing the validation of the final verdict with an existing target ap
   });
 
   it("Testing the workflow statistics", () => {
-    cy.GraphqlWait("workflowListDetails", "recentRuns");
+    cy.GraphqlWait("listWorkflows", "recentRuns");
     cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);

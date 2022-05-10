@@ -17,7 +17,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 
   it("Running PreDefined Workflow", () => {
     cy.chooseAgent(agent);
-    cy.GraphqlWait("GetPredefinedWorkflowList", "getPredefinedData");
+    cy.GraphqlWait("listPredefinedWorkflows", "getPredefinedData");
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 
     cy.wait("@getPredefinedData");
@@ -112,7 +112,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
@@ -149,7 +149,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
   });
 
   it("Validating graph nodes", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.validateWorkflowStatus(workflowName, workflowNamespace, [
