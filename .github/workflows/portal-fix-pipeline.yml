@@ -36,11 +36,13 @@ jobs:
           args: >
             --agents 3
             --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
+
       - name: Configuring and Testing the Cluster Installation
         run: |
           kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
+          
       - name: Deploying Litmus-Portal using **k8s-manifest**
         run: |
           chmod 755 ./litmus/install-portal.sh

@@ -13,7 +13,7 @@ function install_portal_cs_mode() {
 
     echo -e "\n---------------Installing Litmus-Portal in Cluster Scope----------\n"
     # curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
-    manifest_image_update $version litmus/cluster-k8s-manifest.yml
+    # manifest_image_update $version litmus/cluster-k8s-manifest.yml
 
     kubectl apply -f litmus/cluster-k8s-manifest.yml
 }
@@ -32,7 +32,7 @@ function install_portal_ns_mode(){
 
     # Replacing ${LITMUS_PORTAL_NAMESPACE}
     envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus/namespaced-k8s-template.yml > ${namespace}-ns-scoped-litmus-portal-manifest.yml
-    manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
+    # manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
 
     cat ${namespace}-ns-scoped-litmus-portal-manifest.yml
 
