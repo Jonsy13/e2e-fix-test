@@ -12,10 +12,10 @@ installation_mode=${INSTALLATION_MODE}
 function install_portal_cs_mode() {
 
     echo -e "\n---------------Installing Litmus-Portal in Cluster Scope----------\n"
-    # curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
+    curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
     # manifest_image_update $version litmus/cluster-k8s-manifest.yml
 
-    kubectl apply -f litmus/cluster-k8s-manifest.yml
+    kubectl apply -f litmus-portal-setup.yml
 }
 
 function install_portal_ns_mode(){
@@ -62,9 +62,9 @@ function wait_for_portal_to_be_ready(){
     verify_pod litmusportal-server ${namespace}
     verify_pod mongo ${namespace}
 
-    # Images verification
-    verify_deployment_image $version litmusportal-frontend ${namespace}
-    verify_deployment_image $version litmusportal-server ${namespace}
+    # # Images verification
+    # verify_deployment_image $version litmusportal-frontend ${namespace}
+    # verify_deployment_image $version litmusportal-server ${namespace}
 }
 
 if [[ "$installation_mode" == "CS-MODE" ]];then
