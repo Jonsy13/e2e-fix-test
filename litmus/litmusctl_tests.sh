@@ -24,7 +24,7 @@ function test_install_with_nodeSelectors() {
     # Installing CRD's, required for namespaced mode
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
     
-    litmusctl create agent --agent-name=${namespace} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector="beta.kubernetes.io/arch=arm64" --non-interactive
+    litmusctl create agent --agent-name=${namespace} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector="beta.kubernetes.io/arch=amd64" --non-interactive
 
     wait_for_agent_to_be_ready
 
@@ -32,7 +32,7 @@ function test_install_with_nodeSelectors() {
 
     for i in $(echo $components | sed "s/,/ /g")
     do
-        verify_deployment_nodeselector ${i} ${namespace} '{"beta.kubernetes.io/arch":"arm64"}' 
+        verify_deployment_nodeselector ${i} ${namespace} '{"beta.kubernetes.io/arch":"amd64"}' 
     done
 }
 
