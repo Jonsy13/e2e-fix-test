@@ -171,6 +171,20 @@ function verify_all_components(){
     done
 }
 
+function verify_deployment_nodeselector(){
+    deployement=$1
+    namespace=$2
+    requiredNodeSelector=$3
+
+    nodeSelector=$(kubectl get deploy ${deployment} -n ${namespace} -o jsonpath='{.spec.template.spec.nodeSelector}')
+    if [[ ${nodeSelector} == ${requiredNodeSelector} ]];then
+        echo "$deployment deployment is having the required ${requiredNodeSelector} ✓"
+    else 
+        echo "$deployment deployment is not having the required ${requiredNodeSelector}"
+        exit 1
+    fi
+}
+
 # Function to setup Ingress in given namespace for ChaosCenter
 function setup_ingress(){
     namespace=$1
