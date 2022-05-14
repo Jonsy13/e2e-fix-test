@@ -53,17 +53,17 @@ jobs:
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
 
-      - uses: AbsaOSS/k3d-action@v2
-        name: Create 2nd Cluster
-        with:
-          cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 1
+      # - uses: AbsaOSS/k3d-action@v2
+      #   name: Create 2nd Cluster
+      #   with:
+      #     cluster-name: ${{ env.EXTERNAL_AGENT }}
+      #     args: --agents 1
 
-      - name: Configuring and Testing the Agent Installation
-        run: |
-          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
-          kubectl get nodes
-          kubectl get pods -n kube-system
+      # - name: Configuring and Testing the Agent Installation
+      #   run: |
+      #     kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
+      #     kubectl get nodes
+      #     kubectl get pods -n kube-system
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
