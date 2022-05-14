@@ -67,10 +67,10 @@ jobs:
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
-          curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
-          tar -zxvf litmusctl-linux-amd64-master.tar.gz
-          chmod +x litmusctl
-          sudo mv litmusctl /usr/local/bin/litmusctl
+# curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf ./litmus/litmusctl-linux-amd64-master.tar.gz
+          chmod +x ./litmus/litmusctl
+          sudo mv ./litmus/litmusctl /usr/local/bin/litmusctl
           litmusctl version
 
       - name: Running basic tests (Login and Onboarding Tests)
