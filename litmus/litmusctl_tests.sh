@@ -23,28 +23,28 @@ function agent_cleanup(){
     kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 }
 
-function test_install_with_nodeSelectors() {
-    configure_account
+# function test_install_with_nodeSelectors() {
+#     configure_account
     
-    projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
+#     projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
 
-    kubectl create ns ${namespace}
-    # Installing CRD's, required for namespaced mode
-    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+#     kubectl create ns ${namespace}
+#     # Installing CRD's, required for namespaced mode
+#     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
     
-    litmusctl create agent --agent-name=${agentName}-1 --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=$nodeSelectors --non-interactive
+#     litmusctl create agent --agent-name=${agentName}-1 --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=$nodeSelectors --non-interactive
 
-    wait_for_agent_to_be_ready
+#     wait_for_agent_to_be_ready
 
-    echo "Verifying nodeSelectors in all required Deployments"
+#     echo "Verifying nodeSelectors in all required Deployments"
 
-    for i in $(echo $components | sed "s/,/ /g")
-    do
-        verify_deployment_nodeselector ${i} ${namespace} '{"beta.kubernetes.io/arch":"amd64"}'
-    done
+#     for i in $(echo $components | sed "s/,/ /g")
+#     do
+#         verify_deployment_nodeselector ${i} ${namespace} '{"beta.kubernetes.io/arch":"amd64"}'
+#     done
 
-    agent_cleanup
-}
+#     agent_cleanup
+# }
 
 function test_install_with_tolerations() {
     configure_account
@@ -82,6 +82,6 @@ function wait_for_agent_to_be_ready(){
     verify_all_components $components ${namespace}
 }
 
-test_install_with_nodeSelectors
+# test_install_with_nodeSelectors
 
 test_install_with_tolerations
