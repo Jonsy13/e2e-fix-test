@@ -53,18 +53,6 @@ jobs:
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
 
-      # - uses: AbsaOSS/k3d-action@v2
-      #   name: Create 2nd Cluster
-      #   with:
-      #     cluster-name: ${{ env.EXTERNAL_AGENT }}
-      #     args: --agents 1
-
-      # - name: Configuring and Testing the Agent Installation
-      #   run: |
-      #     kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
-      #     kubectl get nodes
-      #     kubectl get pods -n kube-system
-
       - name: Installing LitmusCTL on Agent Cluster
         run: |
           tar -zxvf ./litmus/litmusctl-linux-amd64-master.tar.gz
@@ -83,10 +71,10 @@ jobs:
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Running Litmusctl CLI based tests
+      - name: Running Litmusctl CLE tests (Configured with NodeSelectors)
         run: |
           chmod 755 ./litmus/litmusctl_tests.sh
-          ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_with_nodeSelectors
         env:
           AGENT_NAMESPACE: "agent-1"
           INSTALLATION_MODE: "NS-MODE"
@@ -94,17 +82,24 @@ jobs:
           AGENT_NAME: "agent-1"
           PROJECT_NAME: "admin's project"
 
-      # - name: Portal Cleanup
-      #   if: always()
-      #   run: |
-      #     kubectl config use-context k3d-${{ env.SELF_AGENT }}
-      #     chmod 755 ./litmus/uninstall-portal.sh
-      #     ./litmus/uninstall-portal.sh
-      #   env:
-      #     PORTAL_VERSION: ${{ env.TAG }}
+      - name: Running Litmusctl CLE tests (Configured with Tolerations)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_with_tolerations
+        env:
+          AGENT_NAMESPACE: "agent-2"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-2"
+          PROJECT_NAME: "admin's project"
 
-      # - uses: actions/upload-artifact@v1
-      #   if: failure()
-      #   with:
-      #     name: Cluster-Scope-Mode-${{ matrix.AcessType }}-screenshots
-      #     path: Cypress/cypress/screenshots
+      - name: Running Litmusctl CLE tests (Natively Configured)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_native
+        env:
+          AGENT_NAMESPACE: "agent-3"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-3"
+          PROJECT_NAME: "admin's project"
