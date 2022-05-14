@@ -40,7 +40,7 @@ function test_install_with_nodeSelectors() {
 
     for i in $(echo $components | sed "s/,/ /g")
     do
-        verify_deployment_tolerations ${i} ${namespace} ${nodeSelectors} 
+        verify_deployment_nodeselector ${i} ${namespace} '{"beta.kubernetes.io/arch":"amd64"}'
     done
 
     agent_cleanup
