@@ -191,8 +191,6 @@ function verify_deployment_tolerations(){
     requiredTolerations=$3
 
     tolerations=$(kubectl get deploy ${deployment} -n ${namespace} -o jsonpath='{.spec.template.spec.tolerations}')
-    echo -e "\ntolerations: $tolerations\n"
-    echo -e "\nrequiredTolerations: $requiredTolerations\n"
     if [[ "$tolerations" == "$requiredTolerations" ]];then
         echo "$deployment deployment is having the required tolerations ${requiredTolerations} ✓"
     else 
