@@ -178,9 +178,23 @@ function verify_deployment_nodeselector(){
 
     nodeSelector=$(kubectl get deploy ${deployment} -n ${namespace} -o jsonpath='{.spec.template.spec.nodeSelector}')
     if [[ ${nodeSelector} == ${requiredNodeSelector} ]];then
-        echo "$deployment deployment is having the required ${requiredNodeSelector} ✓"
+        echo "$deployment deployment is having the required nodeSelector ${requiredNodeSelector} ✓"
     else 
-        echo "$deployment deployment is not having the required ${requiredNodeSelector}"
+        echo "$deployment deployment is not having the required nodeSelector ${requiredNodeSelector}"
+        exit 1
+    fi
+}
+
+function verify_deployment_tolerations(){
+    deployement=$1
+    namespace=$2
+    requiredTolerations=$3
+
+    tolerations=$(kubectl get deploy ${deployment} -n ${namespace} -o jsonpath='{.spec.template.spec.tolerations}')
+    if [[ ${nodeSelector} == ${requiredTolerations} ]];then
+        echo "$deployment deployment is having the required tolerations ${requiredTolerations} ✓"
+    else 
+        echo "$deployment deployment is not having the required tolerations ${requiredTolerations}"
         exit 1
     fi
 }
