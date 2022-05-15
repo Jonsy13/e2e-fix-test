@@ -14,5 +14,5 @@ kubectl delete chaosresult --all -A
 
 # Shutting down the Litmus-Portal Setup
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl delete -f litmus-portal-namespaced-k8s-template.yml -n ${LITMUS_PORTAL_NAMESPACE}
 

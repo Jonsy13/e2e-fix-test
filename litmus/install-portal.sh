@@ -25,19 +25,11 @@ function install_portal_ns_mode(){
     # Installing CRD's, required for namespaced mode
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 
-    # Exporting namespace variable to update `namespaced-k8s-template.yml` manifest
-    export LITMUS_PORTAL_NAMESPACE=${namespace}
     # Downloading manifest for namespaced mode installation
     curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
 
-    # Replacing ${LITMUS_PORTAL_NAMESPACE}
-    envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${namespace}-ns-scoped-litmus-portal-manifest.yml
-    # manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
-
-    cat ${namespace}-ns-scoped-litmus-portal-manifest.yml
-
-    # Applying the manifest
-    kubectl apply -f ${namespace}-ns-scoped-litmus-portal-manifest.yml -n ${namespace}
+    # Applying the manifest in provided namespace
+    kubectl apply -f litmus-portal-namespaced-k8s-template.yml -n ${namespace}
 }
 
 
