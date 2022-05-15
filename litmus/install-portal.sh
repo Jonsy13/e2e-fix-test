@@ -28,11 +28,11 @@ function install_portal_ns_mode(){
     # Exporting namespace variable to update `namespaced-k8s-template.yml` manifest
     export LITMUS_PORTAL_NAMESPACE=${namespace}
     # Downloading manifest for namespaced mode installation
-    # curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
+    curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
 
     # Replacing ${LITMUS_PORTAL_NAMESPACE}
-    envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus/namespaced-k8s-template.yml > ${namespace}-ns-scoped-litmus-portal-manifest.yml
-    # manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
+    envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${namespace}-ns-scoped-litmus-portal-manifest.yml
+    manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
 
     cat ${namespace}-ns-scoped-litmus-portal-manifest.yml
 
