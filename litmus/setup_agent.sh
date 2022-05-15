@@ -12,8 +12,7 @@ agentName=${AGENT_NAME}
 projectName=${PROJECT_NAME}
 
 function setup_litmusctl(){
-    curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-${litmusctlVersion}.tar.gz
-    tar -zxvf litmusctl-linux-amd64-${litmusctlVersion}.tar.gz
+    tar -zxvf ./litmus/litmusctl-linux-amd64-master.tar.gz
     chmod +x litmusctl
     sudo mv litmusctl /usr/local/bin/litmusctl
     litmusctl version
