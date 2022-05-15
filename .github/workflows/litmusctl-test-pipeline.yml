@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort]
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -100,6 +100,24 @@ jobs:
           INSTALLATION_MODE: "NS-MODE"
           ACCESS_URL: ${{ env.URL }}
           AGENT_NAME: "agent-3"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get projects)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_projects
+        env:
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get agents)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_agents
+        env:
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
           PROJECT_NAME: "admin's project"
 
   Cluster-Scope-Mode:
@@ -107,7 +125,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort]
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -185,4 +203,22 @@ jobs:
           INSTALLATION_MODE: "CS-MODE"
           ACCESS_URL: ${{ env.URL }}
           AGENT_NAME: "agent-3"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get projects)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_projects
+        env:
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get agents)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_agents
+        env:
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
           PROJECT_NAME: "admin's project"

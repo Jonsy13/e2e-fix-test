@@ -13,6 +13,9 @@ components="subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-c
 defaultTolerations='[{"tolerationSeconds":0,"key":"special","value":"true","Operator":"Equal","effect":"NoSchedule"}]'
 defaultNodeSelectors='beta.kubernetes.io/arch=amd64'
 
+
+# Custom functions for running litmusctl commands -------------------------------------------------------------------
+
 function configure_account(){
     litmusctl config set-account --endpoint="${accessPoint}" --username="admin" --password="litmus"
 }
@@ -47,6 +50,21 @@ function configure_agent(){
 
     wait_for_agent_to_be_ready      
 }
+
+function wait_for_agent_to_be_ready(){
+
+    echo -e "\n---------------Pods running in ${namespace} Namespace---------------\n"
+    kubectl get pods -n ${namespace}
+
+    echo -e "\n---------------Waiting for all pods to be ready---------------\n"
+    # Waiting for pods to be ready (timeout - 360s)
+    wait_for_pods ${namespace} 360
+
+    # Deployments verification
+    verify_all_components $components ${namespace}
+}
+
+# functions for running tests for litmusctl -------------------------------------------------------------------
 
 function test_install_with_nodeSelectors() {
     configure_account
@@ -86,17 +104,33 @@ function test_native() {
     agent_cleanup
 }
 
-function wait_for_agent_to_be_ready(){
+function test_get_projects(){
+    configure_account
 
-    echo -e "\n---------------Pods running in ${namespace} Namespace---------------\n"
-    kubectl get pods -n ${namespace}
+    projects=$(litmusctl get projects | wc -l)
 
-    echo -e "\n---------------Waiting for all pods to be ready---------------\n"
-    # Waiting for pods to be ready (timeout - 360s)
-    wait_for_pods ${namespace} 360
+    if [[ ${projects} -gt 1 ]];then
+        echo "litmusctl get projects working fine ✓"
+    else 
+        echo "litmusctl get projects not working as expected"
+        exit 1
+    fi
+}
 
-    # Deployments verification
-    verify_all_components $components ${namespace}
+function test_get_agents(){
+    configure_account
+
+    projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
+
+    noOfProjects=$(litmusctl get agents --project-id=$projectID | wc -l)
+
+    if [[ ${noOfProjects} -gt 1 ]];then
+        echo "litmusctl get agents working fine ✓"
+    else 
+        echo "litmusctl get agents not working as expected"
+        exit 1
+    fi
+
 }
 
 case ${1} in
@@ -108,6 +142,12 @@ case ${1} in
     ;;
   test_native)
     test_native
+    ;;
+  test_get_projects)
+    test_get_projects
+    ;;
+  test_get_agents)
+    test_get_agents
     ;;
   *)
     echo "Invalid Arguments"
