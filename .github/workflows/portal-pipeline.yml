@@ -46,7 +46,7 @@ jobs:
           kubectl get nodes
           kubectl get pods -n kube-system
 
-      - name: Deploying Litmus-Portal using **k8s-manifest**
+      - name: Deploying Litmus-Portal using k8s-manifest
         run: |
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
@@ -55,21 +55,6 @@ jobs:
           ACCESS_TYPE: ${{ matrix.AcessType }}
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
-
-      # - name: Deploying Prometheus as a DataSource
-      #   run: |
-      #     mkdir monitoring && cd monitoring
-      #     git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
-      #     kubectl create ns monitoring
-      #     kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-      #     kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-      #     kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-      #     source ../../../litmus/utils.sh
-      #     wait_for_pods monitoring 720
-      #     wait_for_loadbalancer prometheus-k8s monitoring
-      #     loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-      #     DATA_SOURCE="http://$loadBalancerIP:9090"
-      #     echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
@@ -95,58 +80,7 @@ jobs:
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Verifying the execution-plane components
-        if: always()
-        run: |
-          kubectl config use-context k3d-${{ env.SELF_AGENT }}
-          source ./litmus/utils.sh
-          verify_all_components ${COMPONENTS} ${NAMESPACE}
-          wait_for_pods ${NAMESPACE} 720
-        env:
-          COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
-          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
-
-      # - name: Running Post-Authentication Tests
-      #   uses: cypress-io/github-action@v2
-      #   if: always()
-      #   continue-on-error: false
-      #   with:
-      #     spec: cypress/integration/Parallel_Tests/**/*.spec.js
-      #     working-directory: Cypress/
-      #     config-file: cypress.prod.json
-      #     env: true
-      #   env:
-      #     CYPRESS_BASE_URL: ${{ env.URL }}
-      #     CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
-      #     CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
-      #     CYPRESS_AGENT_NAMESPACE: ${{ env.CS_MODE_NAMESPACE}}
-      #     CYPRESS_AGENT: "Self-Agent"
-      #     CYPRESS_TARGET_APP_NS: "default"
-      #     CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
-
-      # - uses: AbsaOSS/k3d-action@v2
-      #   name: Create 2nd Cluster
-      #   with:
-      #     cluster-name: ${{ env.EXTERNAL_AGENT }}
-      #     k3d-version: v5.2.2 #Required for prometheus v1beta1
-      #     args: --agents 1
-
-      # - name: Configuring and Testing the Agent Installation
-      #   run: |
-      #     kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
-      #     kubectl get nodes
-      #     kubectl get pods -n kube-system
-
-      # # Fetching Access Point & Token for accessing kube api server
-      # - run: |
-      #     kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
-      #     export CLUSTER_NAME=k3d-${{ env.EXTERNAL_AGENT }}
-      #     KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
-      #     KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
-      #     echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
-      #     echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
-
-      - name: Installing LitmusCTL on Agent Cluster
+      - name: Deploying agents using LitmusCTL on Cluster
         run: |
           chmod 755 ./litmus/setup_agent.sh
           ./litmus/setup_agent.sh
@@ -174,7 +108,7 @@ jobs:
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
           CYPRESS_AGENT_NAMESPACE: "cs-1"
           CYPRESS_AGENT: "Agent-1"
-          CYPRESS_TARGET_APP_NS: "default"
+          CYPRESS_TARGET_APP_NS: "cs-1"
 
       # TODO: Additional Tests will be added from here
 
