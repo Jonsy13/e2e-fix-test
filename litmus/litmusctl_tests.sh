@@ -110,9 +110,9 @@ function test_get_projects(){
     projects=$(litmusctl get projects | wc -l)
 
     if [[ ${projects} -gt 1 ]];then
-        echo "litmusctl get projects working fine ✓"
+        echo -e "\n[Info]: litmusctl get projects working fine ✓\n"
     else 
-        echo "litmusctl get projects not working as expected"
+        echo -e "\n[Error]: litmusctl get projects not working as expected\n"
         exit 1
     fi
 }
@@ -125,9 +125,9 @@ function test_get_agents(){
     noOfProjects=$(litmusctl get agents --project-id=$projectID | wc -l)
 
     if [[ ${noOfProjects} -gt 1 ]];then
-        echo "litmusctl get agents working fine ✓"
+        echo -e "\n[Info]: litmusctl get agents working fine ✓\n"
     else 
-        echo "litmusctl get agents not working as expected"
+        echo -e "\n[Error]: litmusctl get agents not working as expected\n"
         exit 1
     fi
 
