@@ -9,7 +9,7 @@ accessPoint=${ACCESS_URL}
 agentName=${AGENT_NAME}
 projectName=${PROJECT_NAME}
 
-components="subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller"
+components=subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 defaultTolerations='[{"tolerationSeconds":0,"key":"special","value":"true","Operator":"Equal","effect":"NoSchedule"}]'
 defaultNodeSelectors='beta.kubernetes.io/arch=amd64'
 
