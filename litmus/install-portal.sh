@@ -32,7 +32,7 @@ function install_portal_ns_mode(){
 
     # Replacing ${LITMUS_PORTAL_NAMESPACE}
     envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${namespace}-ns-scoped-litmus-portal-manifest.yml
-    manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
+    # manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
 
     cat ${namespace}-ns-scoped-litmus-portal-manifest.yml
 
