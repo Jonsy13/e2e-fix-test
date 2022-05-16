@@ -21,7 +21,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 
     cy.wait("@getPredefinedData");
-    cy.chooseWorkflow(0, 1);
+    cy.chooseWorkflow(0, 0);
 
     cy.get("[data-cy=WorkflowNamespace] input").should(
       "have.value",
@@ -49,14 +49,14 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait(3000);
     cy.get("[data-cy=addExperimentSearch]").should("not.exist");
-    const experimentArray = [
-      {
-        targetAppNS: workflowNamespace,
-        label: "name=podtato-main",
-        experimentName: "podtato-main-pod-delete-chaos",
-      },
-    ];
-    cy.validateExperiment(experimentArray);
+    // const experimentArray = [
+    //   {
+    //     targetAppNS: workflowNamespace,
+    //     label: "name=podtato-main",
+    //     experimentName: "podtato-main-pod-delete-chaos",
+    //   },
+    // ];
+    // cy.validateExperiment(experimentArray);
     cy.get("table").find("tr").eq(1).find("td").eq(0).click();
     const workflowParameters = {
       general: {

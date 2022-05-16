@@ -142,14 +142,7 @@ Cypress.Commands.add(
     nextRun
   ) => {
     cy.GraphqlWait("listWorkflows", "SelectedWorkflowStats");
-    let workflowId = "";
-    let clusterId = "";
-    cy.wait("@recentRuns").then((res) => {
-      workflowId = res.response.body.data.ListWorkflow.workflows[0].workflow_id;
-      clusterId = res.response.body.data.ListWorkflow.workflows[0].cluster_id;
-      cy.get("[data-cy=infoWorkflowId]").should("have.text", workflowId);
-      cy.get("[data-cy=infoClusterId]").should("have.text", clusterId);
-    });
+    cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
     cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
     cy.get("[data-cy=infoWorkflowSubject]").should(
