@@ -28,7 +28,7 @@ function install_portal_ns_mode(){
 
     # kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespace-k8s-manifest.yml -n ${namespace}
 
-    kubectl apply -f litmus/namespace-k8s-manifest.yml -n ${namespace}
+    kubectl apply -f litmus/namespaced-k8s-manifest.yml -n ${namespace}
 }
 
 
