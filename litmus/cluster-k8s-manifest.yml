@@ -507,7 +507,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: amitkrdas/os-frontend:latest
+          image: litmuschaos/litmusportal-frontend:ci
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000
@@ -594,7 +594,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: amitkrdas/os-gql-server:latest
+          image: jonsy13/gql-server:apis
           volumeMounts:
             - mountPath: /tmp/gitops
               name: gitops-storage
@@ -623,7 +623,7 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "amitkrdas/os-subscriber:latest"
+              value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -631,11 +631,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.7.0"
+              value: "litmuschaos/chaos-operator:2.8.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.7.0"
+              value: "litmuschaos/chaos-runner:2.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.7.0"
+              value: "litmuschaos/chaos-exporter:2.8.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -655,11 +655,13 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.7.x"
+              value: "v2.8.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
+            - name: LITMUS_CORE_VERSION
+              value: "2.8.0"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -729,7 +731,7 @@ spec:
               ephemeral-storage: "1Gi"
       containers:
         - name: auth-server
-          image: amitkrdas/os-auth-server:latest
+          image: litmuschaos/litmusportal-auth-server:ci
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false

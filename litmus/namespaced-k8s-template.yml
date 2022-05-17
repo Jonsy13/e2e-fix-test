@@ -1,5 +1,5 @@
 ### RBAC Manifests
-## If SELF_CLUSTER="true" then these permissions are required to apply 
+## If SELF_AGENT="true" then these permissions are required to apply 
 ## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -49,7 +49,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -107,7 +106,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 #these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -118,7 +116,7 @@ metadata:
     name: subscriber-role-for-litmusportal-server
 rules:
   - apiGroups: [""]
-    resources: [configmaps]
+    resources: [configmaps, secrets]
     verbs: [get, create, delete, update]
 
   - apiGroups: [""]
@@ -152,7 +150,6 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 roleRef:
   kind: Role
   name: subscriber-role-for-litmusportal-server
@@ -277,7 +274,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -316,7 +312,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -330,7 +325,7 @@ rules:
     resources: [eventtrackerpolicies/status]
     verbs: [get, patch, update]
   - apiGroups: ["", extensions, apps]
-    resources: [deployments, daemonsets, statefulsets, pods, configmaps]
+    resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
     verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -344,9 +339,8 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 # litmus-server-role is used by the litmusportal-server
-# If SELF_CLUSTER=false, then only litmus-server-role and litmus-server-rb are required.
+# If SELF_AGENT=false, then only litmus-server-role and litmus-server-rb are required.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -383,7 +377,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -405,7 +398,6 @@ metadata:
   name: litmus-portal-admin-config
 data:
   AGENT_SCOPE: namespace
-  AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
   DB_SERVER: "mongodb://mongo-service:27017"
   VERSION: "ci"
   SKIP_SSL_VERIFY: "false"
@@ -553,7 +545,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.6.0
+          image: litmuschaos/curl:2.7.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -575,7 +567,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: jonsy13/gql-server:apis
           volumeMounts:
             - mountPath: /tmp/gitops
               name: gitops-storage
@@ -596,8 +588,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: SELF_CLUSTER
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SELF_AGENT
               value: "true"
+            - name: SELF_AGENT_NODE_SELECTOR
+              value: ""
+            - name: SELF_AGENT_TOLERATIONS
+              value: ""
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64
               value: ""
@@ -612,23 +612,25 @@ spec:
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v3.2.3"
+              value: "litmuschaos/workflow-controller:v3.2.9"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v3.2.3"
+              value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.6.0"
+              value: "litmuschaos/chaos-operator:2.8.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.6.0"
+              value: "litmuschaos/chaos-runner:2.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.6.0"
+              value: "litmuschaos/chaos-exporter:2.8.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.6.x"
+              value: "v2.8.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
+            - name: LITMUS_CORE_VERSION
+              value: "2.8.0"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -679,7 +681,7 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.6.0
+          image: litmuschaos/curl:2.7.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -772,7 +774,6 @@ spec:
           securityContext:
             #            runAsUser: 2000
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
           args: ["--ipv6"]
           ports:
             - containerPort: 27017

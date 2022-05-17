@@ -256,7 +256,13 @@ describe("Testing the validation of the final verdict with an existing target ap
   });
 
   it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-    cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1);
+    let Experiments = [
+      {
+        name: "pod-delete",
+        weight: 5,
+      },
+    ];
+    cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1, Experiments);
   });
 
   it("Testing the workflow statistics", () => {
@@ -273,7 +279,7 @@ describe("Testing the validation of the final verdict with an existing target ap
       "Non cron workflow",
       "Non cron workflow"
     );
-    cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
+    cy.validateWorkflowStatsGraph(0, 1, 50, 50, 50);
     cy.validateRecurringStatsWithLessResiliency();
   });
 });
