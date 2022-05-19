@@ -279,7 +279,7 @@ describe("Testing the validation of the final verdict with an existing target ap
       "Non cron workflow",
       "Non cron workflow"
     );
-    cy.validateWorkflowStatsGraph(0, 1, 50, 50, 50);
+    cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
     cy.validateRecurringStatsWithLessResiliency();
   });
 });
