@@ -187,6 +187,7 @@ Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {
     }
   );
   experimentArray.forEach((experiment, index) => {
+    cy.wait(1000) // Table is taking time to get refreshed with new data
     cy.get("[data-cy=statsTable]")
       .find("tr")
       .eq(index + 1)
