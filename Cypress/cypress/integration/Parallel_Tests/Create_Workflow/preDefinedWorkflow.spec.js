@@ -133,7 +133,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
   it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
     let Experiments = [
       {
-        name: "'podtato-main-pod-delete-chaos",
+        name: "podtato-main-pod-delete-chaos",
         weight: 5,
       },
     ];
