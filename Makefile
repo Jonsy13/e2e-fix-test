@@ -6,7 +6,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 # docker info
 DOCKER_REPO ?= litmuschaos
 DOCKER_IMAGE ?= litmus-e2e
-DOCKER_TAG ?= ci
+DOCKER_TAG ?= c11
 
 .PHONY: build-litmus
 build-litmus:
