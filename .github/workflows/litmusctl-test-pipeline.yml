@@ -59,7 +59,7 @@ jobs:
           litmusctl version
 
       - name: Running basic tests (Login and Onboarding Tests)
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         continue-on-error: false
         with:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
