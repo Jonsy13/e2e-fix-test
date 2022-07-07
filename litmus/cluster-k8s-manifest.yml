@@ -639,7 +639,7 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "shubh214/chaos-operator:upgrade2.0"
+              value: "shubh214/chaos-operator:upgrade2.1"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:2.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
