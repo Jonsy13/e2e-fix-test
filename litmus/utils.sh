@@ -150,7 +150,7 @@ function verify_deployment_image(){
     image=$1
     deployment=$2
     namespace=$3
-    IMAGE=$(eval "kubectl get deployment ${deployement} -n ${namespace} -o=jsonpath='{$.spec.template.spec.containers[:1].image}'")
+    IMAGE=$(eval "kubectl get deployment ${deployment} -n ${namespace} -o=jsonpath='{$.spec.template.spec.containers[:1].image}'")
     if [[ "$image" == "$IMAGE" ]];then
         echo "$deployment deployment is not having the image ${image}"
         exit 1
@@ -172,7 +172,7 @@ function verify_all_components(){
 }
 
 function verify_deployment_nodeselector(){
-    deployement=$1
+    deployment=$1
     namespace=$2
     requiredNodeSelector=$3
 
@@ -186,7 +186,7 @@ function verify_deployment_nodeselector(){
 }
 
 function verify_deployment_tolerations(){
-    deployement=$1
+    deployment=$1
     namespace=$2
     requiredTolerations=$3
 
@@ -221,6 +221,18 @@ function setup_ingress(){
     # Applying Ingress Manifest for Accessing Portal
     kubectl apply -f litmus/ingress.yml -n ${namespace}
     wait_for_ingress litmus-ingress ${namespace}
+}
+
+function get_mongo_url(){
+    namespace=$1
+    kubectl patch svc mongo-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+    export loadBalancer=$(kubectl get services mongo-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+    wait_for_pods ${namespace} 360
+    wait_for_loadbalancer mongo-service ${namespace}
+    export loadBalancerIP=$(kubectl get services mongo-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+    export AccessURL="$loadBalancerIP:27017"
+    echo "MONGO_URL=$AccessURL" >> $GITHUB_ENV
+
 }
 
 # Function to get Access point of ChaosCenter based on Service type(mode) deployed in given namespace

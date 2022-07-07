@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:9091/",
+  "baseUrl": "http://localhost:3001/",
   "experimentalFetchPolyfill": true,
   "viewportWidth": 3840,
   "viewportHeight": 2160,
@@ -13,6 +13,8 @@
     "KUBE_API_TOKEN": "",
     "AGENT_NAMESPACE" : "litmus",
     "AGENT" : "Self-Agent",
-    "TARGET_APP_NS" : "default"
+    "TARGET_APP_NS" : "default",
+    "githubToken": "",
+    "MONGO_URL": "localhost:27017"
   }
 }

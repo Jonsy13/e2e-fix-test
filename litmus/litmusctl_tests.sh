@@ -9,7 +9,7 @@ accessPoint=${ACCESS_URL}
 agentName=${AGENT_NAME}
 projectName=${PROJECT_NAME}
 
-components=subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
+components="subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller"
 defaultTolerations='[{"tolerationSeconds":0,"key":"special","value":"true","Operator":"Equal","effect":"NoSchedule"}]'
 defaultNodeSelectors='beta.kubernetes.io/arch=amd64'
 
@@ -23,7 +23,7 @@ function configure_account(){
 function agent_cleanup(){
     echo -e "\n Cleaning up created agent\n"
     kubectl delete ns $namespace
-    kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+    kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
 }
 
 function configure_agent(){
@@ -38,13 +38,13 @@ function configure_agent(){
 
         kubectl create ns ${namespace}
         # Installing CRD's, required for namespaced mode
-        kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+        kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
         
-        litmusctl create agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
+        litmusctl connect agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
 
     else
             
-        litmusctl create agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=cluster --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
+        litmusctl connect agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=cluster --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
     
     fi
 

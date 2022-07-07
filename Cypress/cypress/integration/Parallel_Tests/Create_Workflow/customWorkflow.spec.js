@@ -73,6 +73,7 @@ describe("Testing the validation of the final verdict with an existing target ap
      * add experiment modal
      */
     cy.wait(1000);
+    // Need other logic for checking engineNames now (Table shows chaosegines now)
     // const experimentArray = [
     //   {
     //     targetAppNS: targetAppNamespace,

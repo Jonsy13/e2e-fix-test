@@ -49,6 +49,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait(3000);
     cy.get("[data-cy=addExperimentSearch]").should("not.exist");
+        // Need other logic for checking engineNames now (Table shows chaosegines now)
     // const experimentArray = [
     //   {
     //     targetAppNS: workflowNamespace,

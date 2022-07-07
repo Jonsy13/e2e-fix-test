@@ -432,6 +432,10 @@ metadata:
   namespace: litmus
 data:
   default.conf: |
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+    }
     server {
         listen       8080;
         server_name  localhost;
@@ -439,6 +443,7 @@ data:
         #access_log  /var/log/nginx/host.access.log  main;
 
         location / {
+            proxy_http_version 1.1;
             root   /usr/share/nginx/html;
             index  index.html index.htm;
             try_files $uri /index.html;
@@ -461,6 +466,7 @@ data:
         #}
 
         location /auth/ {
+            proxy_http_version 1.1;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -469,6 +475,7 @@ data:
         }
 
         location /api/ {
+            proxy_http_version 1.1;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -477,8 +484,9 @@ data:
         }
 
         location /ws/ {
+            proxy_http_version 1.1;
             proxy_set_header   Upgrade              $http_upgrade;
-            proxy_set_header   Connection           "Upgrade";
+            proxy_set_header   Connection           $connection_upgrade;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -594,9 +602,9 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: jonsy13/gql-server:apis
+          image: litmuschaos/litmusportal-server:ci
           volumeMounts:
-            - mountPath: /tmp/gitops
+            - mountPath: /tmp/
               name: gitops-storage
             - mountPath: /tmp/version
               name: hub-storage
@@ -620,7 +628,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: PORTAL_SCOPE
+            - name: CHAOS_CENTER_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
@@ -631,7 +639,7 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.8.0"
+              value: "shubh214/chaos-operator:upgrade2.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:2.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
@@ -648,6 +656,8 @@ spec:
               value: ""
             - name: SELF_AGENT_TOLERATIONS
               value: ""
+            - name: CHAOS_CENTER_UI_ENDPOINT
+              value: ""
             - name: INGRESS
               value: "false"
             - name: INGRESS_NAME
@@ -660,7 +670,7 @@ spec:
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
-            - name: LITMUS_CORE_VERSION
+            - name: WORKFLOW_HELPER_IMAGE_VERSION
               value: "2.8.0"
           ports:
             - containerPort: 8080

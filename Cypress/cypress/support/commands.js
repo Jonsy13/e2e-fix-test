@@ -8,6 +8,9 @@ import "cypress-file-upload";
 import "cypress-wait-until";
 import { apis, KUBE_API_TOKEN } from "../kube-apis/apis";
 import * as user from "../fixtures/Users.json";
+import endpoints from "../fixtures/endpoints";
+import { GET_CLUSTER } from "../fixtures/graphql/queries";
+import { REGISTER_CLUSTER } from "../fixtures/graphql/mutations";
 
 //Custom Command for waiting for required Agent to come in active state.
 Cypress.Commands.add("waitForCluster", (agentName) => {
@@ -35,7 +38,7 @@ Cypress.Commands.add("waitForCluster", (agentName) => {
 
 // GraphQL Waiting
 Cypress.Commands.add("GraphqlWait", (operationName, alias) => {
-  cy.intercept("POST", Cypress.env("apiURL") + "/query", (req) => {
+  cy.intercept("POST", Cypress.env("apiURL") + endpoints.query(), (req) => {
     if (req.body.operationName.includes(operationName)) {
       req.alias = alias;
     }
@@ -139,208 +142,385 @@ Cypress.Commands.add("validateScaffold", () => {
 });
 
 Cypress.Commands.add("validateErrorMessage", (res, message) => {
+  expect(res.status).to.eq(200);
   expect(res.body).to.have.nested.property("errors[0].message");
   expect(res.body.errors[0].message).to.eq(message);
 });
 
+Cypress.Commands.add("createTestUsers", (usersData, adminAccessToken) => {
+  let arr = [];
+  return cy
+    .wrap(usersData)
+    .each((userData) => {
+      return cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + endpoints.createUser(),
+          headers: {
+            authorization: `Bearer ${adminAccessToken}`,
+          },
+          body: userData,
+        })
+        .then((res) => {
+          arr.push(res.body._id);
+        });
+    })
+    .then(() => {
+      return arr;
+    });
+});
+
+Cypress.Commands.add(
+  "sendInvitation",
+  (accessToken, projectId, userId, role) => {
+    return cy.request({
+      method: "POST",
+      url: Cypress.env("authURL") + endpoints.sendInvitation(),
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: {
+        project_id: projectId,
+        user_id: userId,
+        role: role,
+      },
+    });
+  }
+);
+
+Cypress.Commands.add("acceptInvitation", (accessToken, projectId, userId) => {
+  return cy.request({
+    method: "POST",
+    url: Cypress.env("authURL") + endpoints.acceptInvitation(),
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+    body: {
+      project_id: projectId,
+      user_id: userId,
+    },
+  });
+});
+
 /*
   Project1: Admin(Owner), user1(Editor), user3(Viewer)
-  Project2: Admin(Owner), user2(Viewer)
+  Project2: user1(Owner), user2(Viewer)
 */
-Cypress.Commands.add("securityCheckSetup", () => {
-  const Projects = {
-    project1: "project1",
-    project2: "project2",
-  };
-  let project1Id, project2Id, user1Id, user2Id, user3Id, accessToken;
-  cy.requestLogin(user.AdminName, user.AdminPassword);
+Cypress.Commands.add(
+  "createTestProjects",
+  (adminProjectId, adminAccessToken, userRecords) => {
+    let projectIds = [];
+    return cy
+      .wrap(userRecords)
+      .each((userRecord, index) => {
+        return cy
+          .request({
+            method: "POST",
+            url: Cypress.env("authURL") + endpoints.createProject(),
+            headers: {
+              authorization: `Bearer ${userRecord.accessToken}`,
+            },
+            body: {
+              project_name: `user${index + 1}'s project`,
+            },
+          })
+          .then((res) => {
+            projectIds.push(res.body.data.ID);
+          });
+      })
+      .then(() => {
+        return cy.sendInvitation(
+          adminAccessToken,
+          adminProjectId,
+          userRecords[0].userId,
+          "Editor"
+        );
+      })
+      .then(() => {
+        return cy.sendInvitation(
+          adminAccessToken,
+          adminProjectId,
+          userRecords[2].userId,
+          "Viewer"
+        );
+      })
+      .then(() => {
+        return cy.sendInvitation(
+          userRecords[0].accessToken,
+          projectIds[0],
+          userRecords[1].userId,
+          "Viewer"
+        );
+      })
+      .then(() => {
+        return cy.acceptInvitation(
+          userRecords[2].accessToken,
+          adminProjectId,
+          userRecords[2].userId,
+          "Viewer"
+        );
+      })
+      .then(() => {
+        return cy.acceptInvitation(
+          userRecords[0].accessToken,
+          adminProjectId,
+          userRecords[0].userId
+        );
+      })
+      .then(() => {
+        return cy.acceptInvitation(
+          userRecords[1].accessToken,
+          projectIds[0],
+          userRecords[1].userId
+        );
+      })
+      .then(() => {
+        return projectIds;
+      });
+  }
+);
+
+Cypress.Commands.add("createProject", (projectName, accessToken) => {
   return cy
-    .getCookie("litmus-cc-token")
-    .then((token) => {
-      accessToken = token.value;
-      // create user1
-      const createUser1 = cy
-        .request({
-          method: "POST",
-          url: Cypress.env("authURL") + "/create",
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-          body: { ...user.user1 },
-        })
-        .then((res) => {
-          user1Id = res.body._id;
-        });
+    .request({
+      method: "POST",
+      url: Cypress.env("authURL") + endpoints.createProject(),
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: {
+        project_name: projectName,
+      },
+    })
+    .then((res) => {
+      return res.body.data.ID;
+    });
+});
 
-      // create user2
-      const createUser2 = cy
-        .request({
-          method: "POST",
-          url: Cypress.env("authURL") + "/create",
-          headers: {
-            authorization: `Bearer ${accessToken}`,
+Cypress.Commands.add(
+  "createNamespaceAgent",
+  (agentName, projectId, adminAccessToken, namespace = "n1") => {
+    const url = Cypress.config().baseUrl;
+    let clusterID;
+    return cy
+      .exec(
+        "kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml",
+        { timeout: 60000 }
+      )
+      .then(() => {
+        return cy.exec(
+          `kubectl get ns | awk '/${namespace}/' | awk '{print $1}'`,
+          { timeout: 60000 }
+        );
+      })
+      .then((res) => {
+        if (res.stdout === "") {
+          return cy.exec(`kubectl create ns ${namespace}`, {
+            timeout: 60000,
+          });
+        } else {
+          return cy.exec(
+            `kubectl delete ns ${namespace} && kubectl create ns ${namespace}`,
+            { timeout: 60000 }
+          );
+        }
+      })
+      .then(() => {
+        cy.request(
+          {
+            method: "POST",
+            url: Cypress.env("apiURL") + endpoints.query(),
+            body: {
+              operationName: "registerCluster",
+              variables: {
+                request: {
+                  clusterName: agentName,
+                  platformName: "local",
+                  projectID: projectId,
+                  clusterType: "external",
+                  agentScope: "namespace",
+                  agentNamespace: namespace,
+                  tolerations: [],
+                },
+              },
+              query: REGISTER_CLUSTER,
+            },
+            headers: {
+              authorization: adminAccessToken,
+            },
           },
-          body: { ...user.user2 },
-        })
-        .then((res) => {
-          user2Id = res.body._id;
-        });
+          { timeout: 600000 }
+        );
+      })
+      .then((res) => {
+        clusterID = res.body.data.registerCluster.clusterID;
+        return cy.exec(
+          `kubectl apply -f ${url}api/file/${res.body.data.registerCluster.token}.yaml`,
+          { timeout: 60000 }
+        );
+      })
+      .then(() => {
+        return cy.task("waitForAgent", agentName, { timeout: 600000 });
+      })
+      .then(() => {
+        return clusterID;
+      });
+  }
+);
 
-      // create user3
-      const createUser3 = cy
-        .request({
-          method: "POST",
-          url: Cypress.env("authURL") + "/create",
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-          body: { ...user.user3 },
-        })
-        .then((res) => {
-          user3Id = res.body._id;
-        });
+Cypress.Commands.add("getAccessToken", (username, password) => {
+  return cy
+    .request({
+      method: "POST",
+      url: Cypress.env("authURL") + endpoints.login(),
+      body: {
+        username,
+        password,
+      },
+    })
+    .then((res) => {
+      return res.body.access_token;
+    });
+});
 
-      // create project1
-      const createProject1 = cy
+Cypress.Commands.add("getAccessTokens", (usersData) => {
+  let accessTokens = [];
+  return cy
+    .wrap(usersData)
+    .each((userData) => {
+      return cy
         .request({
           method: "POST",
-          url: Cypress.env("authURL") + "/create_project",
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
+          url: Cypress.env("authURL") + endpoints.login(),
           body: {
-            project_name: Projects.project1,
+            username: userData.username,
+            password: userData.password,
           },
         })
         .then((res) => {
-          project1Id = res.body.data.ID;
+          accessTokens.push(res.body.access_token);
+          return res.body.access_token;
         });
-      // create project2
-      const createProject2 = cy
-        .request({
-          method: "POST",
-          url: Cypress.env("authURL") + "/create_project",
-          headers: {
-            authorization: `Bearer ${accessToken}`,
+    })
+    .then(() => {
+      return accessTokens;
+    });
+});
+
+function getNested(obj, ...args) {
+  return args.reduce((obj, level) => obj && obj[level], obj);
+}
+
+Cypress.Commands.add("initialRBACSetup", (createAgent) => {
+  const usersData = [user.user1, user.user2, user.user3];
+  let adminProjectId,
+    project1Id,
+    project2Id,
+    project3Id,
+    adminAccessToken,
+    user1AccessToken,
+    user2AccessToken,
+    user3AccessToken,
+    user1Id,
+    user2Id,
+    user3Id,
+    cluster1Id;
+
+  return cy
+    .task("clearDB")
+    .then(() => {
+      cy.clearCookie("litmus-cc-token");
+      indexedDB.deleteDatabase("localforage");
+    })
+    .then(() => {
+      return cy.getAccessToken(user.AdminName, user.AdminPassword);
+    })
+    .then((token) => {
+      adminAccessToken = token;
+      return cy.createProject("admin's project", adminAccessToken);
+    })
+    .then((projectId) => {
+      adminProjectId = projectId;
+      if (createAgent) {
+        return cy.createNamespaceAgent("a1", adminProjectId, adminAccessToken);
+      } else {
+        return null;
+      }
+    })
+    .then(() => {
+      return cy.createTestUsers(usersData, adminAccessToken);
+    })
+    .then((res) => {
+      user1Id = res[0];
+      user2Id = res[1];
+      user3Id = res[2];
+      return cy.getAccessTokens(usersData);
+    })
+    .then((res) => {
+      user1AccessToken = res[0];
+      user2AccessToken = res[1];
+      user3AccessToken = res[2];
+      let userRecords = [
+        {
+          userId: user1Id,
+          accessToken: user1AccessToken,
+        },
+        {
+          userId: user2Id,
+          accessToken: user2AccessToken,
+        },
+        {
+          userId: user3Id,
+          accessToken: user3AccessToken,
+        },
+      ];
+      return cy.createTestProjects(
+        adminProjectId,
+        adminAccessToken,
+        userRecords
+      );
+    })
+    .then((projectIds) => {
+      project1Id = projectIds[0];
+      project2Id = projectIds[1];
+      project3Id = projectIds[1];
+      return cy.request({
+        method: "POST",
+        url: Cypress.env("apiURL") + endpoints.query(),
+        body: {
+          operationName: "listClusters",
+          variables: {
+            projectID: project1Id,
           },
-          body: {
-            project_name: Projects.project2,
-          },
-        })
-        .then((res) => {
-          project2Id = res.body.data.ID;
-        });
-      return Promise.all([
-        createUser1,
-        createUser2,
-        createUser3,
-        createProject1,
-        createProject2,
-      ]);
-    })
-    .then(() => {
-      // send invitation of project1 to user1 with Editor role
-      return cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/send_invitation",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
+          query: GET_CLUSTER,
         },
-        body: {
-          project_id: project1Id,
-          user_id: user1Id,
-          role: "Editor",
+        headers: {
+          authorization: adminAccessToken,
         },
       });
     })
-    .then(() => {
-      // send invitation of project1 to user3 with Viewer role
-      return cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/send_invitation",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: {
-          project_id: project1Id,
-          user_id: user3Id,
-          role: "Viewer",
-        },
-      });
-    })
-    .then(() => {
-      // send invitation of project2 to user2 with Viewer role
-      return cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/send_invitation",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: {
-          project_id: project2Id,
-          user_id: user2Id,
-          role: "Viewer",
-        },
-      });
-    })
-    .then(() => {
-      cy.logout();
-      cy.requestLogin(user.user3.username, user.user3.password);
-      return cy.getCookie("litmus-cc-token");
-    })
-    .then((token) => {
-      return cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/accept_invitation",
-        headers: {
-          authorization: `Bearer ${token.value}`,
-        },
-        body: {
-          project_id: project1Id,
-          user_id: user3Id,
-        },
-      });
-    })
-    .then(() => {
-      cy.logout();
-      cy.requestLogin(user.user1.username, user.user1.password);
-      return cy.getCookie("litmus-cc-token");
-    })
-    .then((token) => {
-      return cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/accept_invitation",
-        headers: {
-          authorization: `Bearer ${token.value}`,
-        },
-        body: {
-          project_id: project1Id,
-          user_id: user1Id,
-        },
-      });
-    })
-    .then(() => {
-      cy.logout();
-      cy.requestLogin(user.user2.username, user.user2.password);
-      return cy.getCookie("litmus-cc-token");
-    })
-    .then((token) => {
-      return cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/accept_invitation",
-        headers: {
-          authorization: `Bearer ${token.value}`,
-        },
-        body: {
-          project_id: project2Id,
-          user_id: user2Id,
-        },
-      });
-    })
-    .then(() => {
-      return cy.logout();
-    })
-    .then(() => {
-      return { project1Id, project2Id, user1Id, user2Id, user3Id };
+    .then((res) => {
+      cluster1Id = getNested(
+        res,
+        "body",
+        "data",
+        "listClusters",
+        "at(0)",
+        "clusterID"
+      );
+      return {
+        adminProjectId,
+        project1Id,
+        project2Id,
+        project3Id,
+        adminAccessToken,
+        user1AccessToken,
+        user2AccessToken,
+        user3AccessToken,
+        user1Id,
+        user2Id,
+        user3Id,
+        cluster1Id,
+      };
     });
 });
