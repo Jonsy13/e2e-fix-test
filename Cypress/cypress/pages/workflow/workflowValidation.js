@@ -30,7 +30,7 @@ Cypress.Commands.add(
     TotalExperiments,
     Experiments
   ) => {
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.get("[data-cy=runs]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);

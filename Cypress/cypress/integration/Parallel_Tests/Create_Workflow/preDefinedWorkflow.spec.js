@@ -10,7 +10,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster(agent);
-    cy.visit("/create-workflow");
+    cy.visit("/create-scenario");
   });
 
   let workflowName = "";
@@ -114,7 +114,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 
   it("Checking Schedules Table for scheduled Workflow", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=workflowSchedulesTable] input")
@@ -151,7 +151,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 
   it("Validating graph nodes", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.validateWorkflowStatus(workflowName, workflowNamespace, [
       "Running",

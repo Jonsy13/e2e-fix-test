@@ -10,7 +10,7 @@ describe("Testing the validation of the final verdict with an existing target ap
   before("Loggin in and checking if agent exists", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster(agent);
-    cy.visit("/create-workflow");
+    cy.visit("/create-scenario");
   });
 
   let workflowName = "";
@@ -147,7 +147,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   it("Checking Schedules Table for scheduled Workflow", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=workflowSchedulesTable] input")
@@ -184,7 +184,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   it("Validating graph nodes", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.validateWorkflowStatus(workflowName, workflowNamespace, [
       "Running",
@@ -244,7 +244,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   // This will runs the above workflow without target application
   it("Rerun a non-recurring workflow", () => {
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait(2000);
     cy.get("table")

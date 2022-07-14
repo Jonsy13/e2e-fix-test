@@ -10,7 +10,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   before("Loggin in and checking if agent exists", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster(agent);
-    cy.visit("/create-workflow");
+    cy.visit("/create-scenario");
   });
 
   let workflowName = "";
@@ -63,7 +63,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
   it("Checking Schedules Table for scheduled Workflow", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);
@@ -137,7 +137,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
   it("Validating graph nodes", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=WorkflowRunsTable] input")
       .eq(0)
@@ -193,7 +193,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   });
 
   it("Disable schedule", () => {
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=browseSchedule]").click();
