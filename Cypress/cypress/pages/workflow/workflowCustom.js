@@ -83,8 +83,8 @@ Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
     },
   ];
   cy.validateExperimentsTable(experimentArray);
-  cy.get("[data-cy=statsBarGraph]").click(650, 250);
-  cy.get("[data-cy=statsBarGraph]").click(650, 250);
+  cy.get("[data-cy=statsBarGraph]").click(650, 250, { force: true});
+  cy.get("[data-cy=statsBarGraph]").click(650, 250, { force: true});
   experimentArray = [
     {
       experimentName: "pod-delete",
