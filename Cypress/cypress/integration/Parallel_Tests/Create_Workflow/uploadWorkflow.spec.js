@@ -168,7 +168,7 @@ describe("Testing the upload Workflow with incorrect workflow manifest", () => {
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.get("[data-cy=AlertBox]").should(
       "have.text",
-      "Please select a workflow type"
+      "Please select a chaos scenario type"
     );
   });
 });
