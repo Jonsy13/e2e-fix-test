@@ -241,8 +241,8 @@ describe("Testing the workflow creation wizard using Templates", () => {
       workflowNamespace,
       workflowSubject,
       agent,
-      "Non cron scenario",
-      "Non cron scenario"
+      "Non cron chaos scenario",
+      "Non cron chaos scenario"
     );
     cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
     const experimentArray = [
