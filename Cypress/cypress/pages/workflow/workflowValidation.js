@@ -155,7 +155,7 @@ Cypress.Commands.add(
     );
     cy.get("[data-cy=infoAgentName]").should("have.text", agentName);
 
-    if (regularity === "Non cron workflow") {
+    if (regularity === "Non cron scenario") {
       cy.get("[data-cy=infoWorkflowRegularity]").should(
         "have.text",
         `Regularity :${regularity}`

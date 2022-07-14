@@ -227,8 +227,8 @@ describe("Testing the validation of the final verdict with an existing target ap
       workflowNamespace,
       workflowSubject,
       agent,
-      "Non cron workflow",
-      "Non cron workflow"
+      "Non cron scenario",
+      "Non cron scenario"
     );
     cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
     const experimentArray = [
@@ -251,7 +251,7 @@ describe("Testing the validation of the final verdict with an existing target ap
       .find("tr")
       .eq(1)
       .then(($div) => {
-        cy.wrap($div).find("td").eq(5).should("have.text", "Non cron workflow");
+        cy.wrap($div).find("td").eq(5).should("have.text", "Non cron scenario");
       });
     cy.rerunWorkflow();
   });
@@ -277,8 +277,8 @@ describe("Testing the validation of the final verdict with an existing target ap
       workflowNamespace,
       workflowSubject,
       agent,
-      "Non cron workflow",
-      "Non cron workflow"
+      "Non cron scenario",
+      "Non cron scenario"
     );
     cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
     cy.validateRecurringStatsWithLessResiliency();
