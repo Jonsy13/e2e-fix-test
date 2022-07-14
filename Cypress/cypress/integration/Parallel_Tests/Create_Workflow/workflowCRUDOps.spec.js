@@ -61,6 +61,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   });
 
   it("Disable schedule and validate if it's running or not", () => {
+    indexedDB.deleteDatabase("localforage");
     cy.visit("/scenarios");
     cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
