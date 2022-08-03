@@ -6,9 +6,12 @@ let namespacedDelegates = ["d-1", "d-2", "d-3"]
 
 describe("Logging In as Admin, fetching admin-access-token & project-id",()=>{
     it("Token setup",()=>{
-      cy.getAccessToken("admin", "litmus").then((token)=> adminAccessToken = token)
-      cy.createProject("admin's project", adminAccessToken).then((projectID)=> adminProjectId = projectID)
-      cy.setCookie("litmus-cc-token", adminAccessToken);
+      cy.getAccessToken("admin", "litmus")
+      .then((token)=> {
+        adminAccessToken = token
+        cy.createProject("admin's project", adminAccessToken).then((projectID)=> adminProjectId = projectID)
+        cy.setCookie("litmus-cc-token", adminAccessToken);
+      })
     })
 })
 
