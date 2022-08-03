@@ -23,7 +23,7 @@ describe("Connecting 3 namespaced scopes delegates along with target app: nginx"
 
 describe("Running 5-5 workflows on 3 different namespaced delegates for calculation of resources & limits",()=>{
     namespacedDelegates.map((agentName)=>{
-        for (i = 0; i < 5 ; i++) {
+        for (var i = 0; i < 5 ; i++) {
             it(`Running ${i}th workflow on ${agentName} delegate`, () => {
                 cy.visit("/create-scenario")
                 cy.waitForCluster(agentName);
