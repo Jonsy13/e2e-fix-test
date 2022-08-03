@@ -102,7 +102,7 @@ describe("Running 5-5 workflows on 3 different namespaced delegates for calculat
 
                 cy.get("[data-cy=FinishModal]").should("be.visible");
                 cy.get("[data-cy=WorkflowName]").then(($name) => {
-                  workflowNames.push({name: $name.text(), namespace: agentName);
+                  workflowNames.push({name: $name.text(), namespace: agentName});
                   return;
                 });
 
