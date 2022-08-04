@@ -28,8 +28,8 @@ describe("Running 5-5 workflows on 3 different namespaced delegates for calculat
     namespacedDelegates.map((agentName)=>{
         for (var i = 0; i < 5 ; i++) {
             it(`Running ${i}th workflow on ${agentName} delegate`, () => {
-                cy.visit("/create-scenario")
                 cy.waitForCluster(agentName);
+                cy.visit("/create-scenario")
                 cy.chooseAgent(agentName);
     
                 cy.get("[data-cy=ControlButtons] Button").eq(0).click();
