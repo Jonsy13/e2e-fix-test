@@ -92,7 +92,7 @@ Cypress.Commands.add(
           .click({ scrollBehavior: false });
       });
     Experiments.map((experiment) => {
-      cy.get("[data-cy=expName]").should("have.text", experiment.name);
+      cy.get("[data-cy=expName]").should("include.text", experiment.name);
       cy.get("[data-cy=expWeight]").should(
         "have.text",
         experiment.weight === 1 || 0
