@@ -14,7 +14,6 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   });
 
   let workflowName = "";
-  let workflowSubject = "";
   let scheduleDate = "";
   let scheduleTime = "";
 
@@ -52,10 +51,6 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
       workflowName = $name.text();
-      return;
-    });
-    cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
-      workflowSubject = $subject.text();
       return;
     });
     cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -174,7 +169,6 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
       "Cron workflow",
       "Cron workflow"

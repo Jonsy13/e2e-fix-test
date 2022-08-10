@@ -136,7 +136,6 @@ Cypress.Commands.add(
   (
     workflowName,
     workflowNamespace,
-    workflowSubject,
     agentName,
     regularity,
     nextRun
@@ -145,10 +144,6 @@ Cypress.Commands.add(
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
     cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
-    cy.get("[data-cy=infoWorkflowSubject]").should(
-      "have.text",
-      workflowSubject
-    );
     cy.get("[data-cy=infoWorkflowNamespace]").should(
       "have.text",
       workflowNamespace

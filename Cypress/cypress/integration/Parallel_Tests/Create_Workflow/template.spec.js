@@ -14,7 +14,6 @@ describe("Testing the workflow creation wizard using Templates", () => {
   });
 
   let workflowName = "";
-  let workflowSubject = "";
 
   it("Running uploaded Workflow", () => {
     cy.chooseAgent(agent);
@@ -145,10 +144,6 @@ describe("Testing the workflow creation wizard using Templates", () => {
       workflowName = $name.text();
       return;
     });
-    cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
-      workflowSubject = $subject.text();
-      return;
-    });
     cy.get("[data-cy=GoToWorkflowButton]").click();
   });
 
@@ -239,7 +234,6 @@ describe("Testing the workflow creation wizard using Templates", () => {
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
       "Non cron chaos scenario",
       "Non cron chaos scenario"

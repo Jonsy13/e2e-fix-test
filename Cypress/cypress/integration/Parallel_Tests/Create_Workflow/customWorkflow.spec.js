@@ -14,7 +14,6 @@ describe("Testing the validation of the final verdict with an existing target ap
   });
 
   let workflowName = "";
-  let workflowSubject = "";
 
   it("Creating a target application", () => {
     cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
@@ -84,11 +83,6 @@ describe("Testing the validation of the final verdict with an existing target ap
     // cy.validateExperiment(experimentArray);
     cy.get("table").find("tr").eq(1).find("td").eq(0).click();
     const tunningParameters = {
-      general: {
-        hubName: "Litmus ChaosHub",
-        experimentName: "pod-delete",
-        context: `pod-delete_${workflowNamespace}`,
-      },
       targetApp: {
         annotationCheckToggle: false,
         appns: "default",
@@ -118,22 +112,10 @@ describe("Testing the validation of the final verdict with an existing target ap
       workflows.customWorkflowDescription,
       0
     );
-    cy.get("[data-cy=WorkflowSubject]").should(
-      "have.text",
-      `${workflows.customWorkflow}_${workflowNamespace}`
-    );
-    cy.get("[data-cy=WorkflowSubject] textarea")
-      .eq(0)
-      .clear()
-      .type("custom-workflow-subject");
     cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
       workflowName = $name.text();
-      return;
-    });
-    cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
-      workflowSubject = $subject.text();
       return;
     });
     cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -225,7 +207,6 @@ describe("Testing the validation of the final verdict with an existing target ap
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
       "Non cron chaos scenario",
       "Non cron chaos scenario"
@@ -275,7 +256,6 @@ describe("Testing the validation of the final verdict with an existing target ap
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
       "Non cron chaos scenario",
       "Non cron chaos scenario"

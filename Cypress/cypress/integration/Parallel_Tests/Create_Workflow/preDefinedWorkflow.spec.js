@@ -27,18 +27,6 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
       "have.value",
       workflowNamespace
     );
-    // Providing a name of 55 characters which should fail
-    // Maximum allowed length is 54 characters
-    cy.configureWorkflowSettings(
-      workflows.extraLargeName,
-      workflows.nonRecurringworkflowDescription,
-      0
-    );
-
-    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-
-    // Check if Alert exists
-    cy.get("[role=alert]").should("be.visible");
 
     // Provide the correct details
     cy.configureWorkflowSettings(
@@ -60,9 +48,6 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
     // cy.validateExperiment(experimentArray);
     cy.get("table").find("tr").eq(1).find("td").eq(0).click();
     const workflowParameters = {
-      general: {
-        context: `podtato-main-pod-delete-chaos_${workflowNamespace}`,
-      },
       targetApp: {
         annotationCheckToggle: false,
         appns: targetAppNamespace,

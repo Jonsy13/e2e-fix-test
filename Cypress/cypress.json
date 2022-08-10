@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:3001",
+  "baseUrl": "http://localhost:3000",
   "experimentalFetchPolyfill": true,
   "viewportWidth": 3840,
   "viewportHeight": 2160,
@@ -8,8 +8,8 @@
   "video": false,
   "experimentalNetworkStubbing": true,
   "env": {
-    "authURL": "http://localhost:3000",
-    "apiURL": "http://localhost:8080",
+    "authURL": "http://34.171.26.87:9091/auth",
+    "apiURL": "http://34.171.26.87:9091/api",
     "KUBE_API_SERVER": "",
     "KUBE_API_TOKEN": "",
     "AGENT_NAMESPACE" : "litmus",

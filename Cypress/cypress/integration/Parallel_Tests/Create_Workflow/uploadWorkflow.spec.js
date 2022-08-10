@@ -14,7 +14,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   });
 
   let workflowName = "";
-  let workflowSubject = "";
 
   it("Creating a target application", () => {
     cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
@@ -39,10 +38,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
       workflowName = $name.text();
-      return;
-    });
-    cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
-      workflowSubject = $subject.text();
       return;
     });
     cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -135,7 +130,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
       "Non cron chaos scenario",
       "Non cron chaos scenario"
