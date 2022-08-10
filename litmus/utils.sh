@@ -251,7 +251,7 @@ function get_access_point(){
         wait_for_url $AccessURL
         echo "URL=$AccessURL" >> $GITHUB_ENV
 
-    elif [[ "$acessType" == "Ingress" ]];then
+    elif [[ "$accessType" == "Ingress" ]];then
 
         setup_ingress ${namespace}
         # Ingress IP for accessing Portal
