@@ -201,15 +201,14 @@ describe("Testing the validation of the final verdict with an existing target ap
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("listWorkflows", "recentRuns");
     cy.visit("/analytics");
-    cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
       agent,
-      "Non cron chaos scenario",
-      "Non cron chaos scenario"
+      "Non Cron Chaos Scenario",
+      "Non Cron Chaos Scenario"
     );
     cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
     const experimentArray = [
@@ -232,7 +231,7 @@ describe("Testing the validation of the final verdict with an existing target ap
       .find("tr")
       .eq(1)
       .then(($div) => {
-        cy.wrap($div).find("td").eq(5).should("have.text", "Non cron chaos scenario");
+        cy.wrap($div).find("td").eq(5).should("have.text", "Non Cron Chaos Scenario");
       });
     cy.rerunWorkflow();
   });
@@ -250,15 +249,14 @@ describe("Testing the validation of the final verdict with an existing target ap
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("listWorkflows", "recentRuns");
     cy.visit("/analytics");
-    cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
       agent,
-      "Non cron chaos scenario",
-      "Non cron chaos scenario"
+      "Non Cron Chaos Scenario",
+      "Non Cron Chaos Scenario"
     );
     cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
     cy.validateRecurringStatsWithLessResiliency();

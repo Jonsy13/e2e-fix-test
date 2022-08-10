@@ -8,7 +8,7 @@ Cypress.Commands.add(
     RScorePercent,
     PassedPercent,
     FailedPercent,
-    workflowType = "Non cron chaos scenario"
+    workflowType = "Non Cron Chaos Scenario"
   ) => {
     cy.get("[data-cy=showStatsButton]").click();
     cy.wait(1000);

@@ -150,7 +150,7 @@ Cypress.Commands.add(
     );
     cy.get("[data-cy=infoAgentName]").should("have.text", agentName);
 
-    if (regularity === "Non cron chaos scenario") {
+    if (regularity === "Non Cron Chaos Scenario") {
       cy.get("[data-cy=infoWorkflowRegularity]").should(
         "have.text",
         `Regularity :${regularity}`
