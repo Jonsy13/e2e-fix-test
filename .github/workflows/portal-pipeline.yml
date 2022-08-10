@@ -28,6 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
       - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
