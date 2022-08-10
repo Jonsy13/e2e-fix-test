@@ -26,7 +26,7 @@ Cypress.Commands.add(
       "have.value",
       workflowParameters.targetApp.appLabel
     );
-    cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
+    cy.get("[data-cy=TargetControlButtons] button").eq(0).click();
 
     // Steady State
     cy.get("[data-cy=SteadyStateControlButtons] button").eq(1).click();
