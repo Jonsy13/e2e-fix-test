@@ -123,7 +123,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort, Ingress, LoadBalancer]
+        AccessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -148,7 +148,7 @@ jobs:
           ./litmus/install-portal.sh
         env:
           PORTAL_VERSION: ${{ env.TAG }}
-          ACCESS_TYPE: ${{ matrix.AcessType }}
+          ACCESS_TYPE: ${{ matrix.AccessType }}
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
 
