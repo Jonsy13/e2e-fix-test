@@ -40,11 +40,11 @@ function configure_agent(){
         # Installing CRD's, required for namespaced mode
         kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
         
-        litmusctl connect agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
+        litmusctl connect chaos-delegate --name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
 
     else
             
-        litmusctl connect agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=cluster --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
+        litmusctl connect chaos-delegate --name=${agentName} --project-id=${projectID} --installation-mode=cluster --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
     
     fi
 
