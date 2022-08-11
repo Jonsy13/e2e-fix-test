@@ -56,7 +56,7 @@ Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
   cy.get("[data-cy=statsBarGraph]").scrollIntoView();
   cy.get("[data-cy=statsBarGraph]").should("be.visible");
   cy.get("[data-cy=statsBarGraph]").within((el) => {
-    cy.wrap(el).find("g").find("rect").eq(4).click();
+    cy.wrap(el).get('g[class$="visx-group"]').last().find("rect").click({ position: "left" ,force: true});
   });
   let experimentArray = [
     {
@@ -67,8 +67,9 @@ Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
     },
   ];
   cy.validateExperimentsTable(experimentArray);
-  cy.get("[data-cy=statsBarGraph]").click(650, 250, { force: true});
-  cy.get("[data-cy=statsBarGraph]").click(650, 250, { force: true});
+  cy.get("[data-cy=statsBarGraph]").within((el) => {
+    cy.wrap(el).get('g[class$="visx-group"]').last().find("rect").click({ position: "right" ,force: true});
+  });
   experimentArray = [
     {
       experimentName: "pod-delete",

@@ -1,5 +1,4 @@
 /// <reference types="Cypress" />
-import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
@@ -161,7 +160,7 @@ describe("Testing the upload Workflow with incorrect workflow manifest", () => {
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.get("[data-cy=AlertBox]").should(
       "have.text",
-      "Please select a chaos scenario type"
+      "Please select a Chaos Scenario type"
     );
   });
 });
