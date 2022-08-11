@@ -122,12 +122,12 @@ function test_get_agents(){
 
     projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
 
-    noOfProjects=$(litmusctl get agents --project-id=$projectID | wc -l)
+    noOfProjects=$(litmusctl get chaos-delegates --project-id=$projectID | wc -l)
 
     if [[ ${noOfProjects} -gt 1 ]];then
-        echo -e "\n[Info]: litmusctl get agents working fine ✓\n"
+        echo -e "\n[Info]: litmusctl get chaos-delegates working fine ✓\n"
     else 
-        echo -e "\n[Error]: litmusctl get agents not working as expected\n"
+        echo -e "\n[Error]: litmusctl get chaos-delegates not working as expected\n"
         exit 1
     fi
 
