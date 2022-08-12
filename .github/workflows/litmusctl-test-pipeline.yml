@@ -19,7 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AccessType: [NodePort, Ingress, LoadBalancer]
+        # Cannot connect external chaos-delegate in namespaced scope mode.
+        AccessType: [Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -45,7 +46,7 @@ jobs:
         env:
           PORTAL_VERSION: ${{ env.TAG }}
           ACCESS_TYPE: ${{ matrix.AccessType }}
-          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "NS-MODE"
 
       - name: Installing LitmusCTL on Agent Cluster
