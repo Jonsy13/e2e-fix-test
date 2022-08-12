@@ -209,6 +209,8 @@ function setup_ingress(){
     # Enabling Ingress in Portal
     kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS="true"
 
+    kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS_NAME="litmus-ingress"
+
     # Installing ingress-nginx
     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
     helm repo update
