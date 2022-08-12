@@ -51,6 +51,13 @@ function configure_agent(){
     wait_for_agent_to_be_ready      
 }
 
+function disconnect_agent(){
+    chaos_delegate_id=$1
+    project_id=$2
+
+    litmusctl disconnect chaos-delegate ${chaos-delegate-id} --project-id=${project_id}
+}
+
 function wait_for_agent_to_be_ready(){
 
     echo -e "\n---------------Pods running in ${namespace} Namespace---------------\n"
@@ -122,15 +129,54 @@ function test_get_agents(){
 
     projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
 
-    noOfProjects=$(litmusctl get chaos-delegates --project-id=$projectID | wc -l)
+    noOfAgents=$(litmusctl get chaos-delegates --project-id=$projectID | wc -l)
 
-    if [[ ${noOfProjects} -gt 1 ]];then
+    if [[ ${noOfAgents} -gt 1 ]];then
         echo -e "\n[Info]: litmusctl get chaos-delegates working fine ✓\n"
     else 
         echo -e "\n[Error]: litmusctl get chaos-delegates not working as expected\n"
         exit 1
     fi
 
+}
+
+function test_create_project(){
+    configure_account
+
+    litmusctl create project --name="my new project"
+
+    noOfProjects=$(litmusctl get projects | wc -l)
+
+    if [[ ${noOfProjects} -gt 2 ]];then
+        echo -e "\n[Info]: litmusctl create project working fine ✓\n"
+    else 
+        echo -e "\n[Error]: litmusctl create project not working as expected\n"
+        exit 1
+    fi
+
+}
+
+function test_disconnect_agent() {
+    configure_account
+
+    configure_agent "" ""
+
+    projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
+
+    chaos_delegate_id=$(litmusctl get chaos-delegates --project-id=$projectID | grep "${agentName}" | awk '{print $1}')
+
+    disconnect_agent chaos_delegate_id projectID
+
+    chaos_delegate_id=$(litmusctl get chaos-delegates --project-id=$projectID | grep "${agentName}" | awk '{print $1}')
+
+    if [[ ${chaos_delegate_id} == "" ]];then
+        echo -e "\n[Info]: litmusctl disconnect chaos-delegate working fine ✓\n"
+    else 
+        echo -e "\n[Error]: litmusctl disconnect chaos-delegate not working as expected\n"
+        exit 1
+    fi
+
+    agent_cleanup
 }
 
 case ${1} in
@@ -148,6 +194,12 @@ case ${1} in
     ;;
   test_get_agents)
     test_get_agents
+    ;;
+  test_create_project)
+    test_create_project
+    ;;
+  test_disconnect_agent)
+    test_disconnect_agent
     ;;
   *)
     echo "Invalid Arguments"

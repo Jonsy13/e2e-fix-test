@@ -120,6 +120,28 @@ jobs:
           ACCESS_URL: ${{ env.URL }}
           PROJECT_NAME: "admin's project"
 
+      - name: Running Litmusctl CLI tests (litmusctl create project)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-4"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-4"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-delegate)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+
   Cluster-Scope-Mode:
     runs-on: ubuntu-20.04
     strategy:
@@ -223,4 +245,26 @@ jobs:
         env:
           INSTALLATION_MODE: "CS-MODE"
           ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl create project)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-4"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-4"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-delegate)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
           PROJECT_NAME: "admin's project"
