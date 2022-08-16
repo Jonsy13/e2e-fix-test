@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:3000",
+  "baseUrl": "http://34.136.68.66:9091/",
   "experimentalFetchPolyfill": true,
   "viewportWidth": 3840,
   "viewportHeight": 2160,
@@ -8,8 +8,8 @@
   "video": false,
   "experimentalNetworkStubbing": true,
   "env": {
-    "authURL": "http://34.171.26.87:9091/auth",
-    "apiURL": "http://34.171.26.87:9091/api",
+    "authURL": "/auth",
+    "apiURL": "/api",
     "KUBE_API_SERVER": "",
     "KUBE_API_TOKEN": "",
     "AGENT_NAMESPACE" : "litmus",
@@ -17,6 +17,7 @@
     "TARGET_APP_NS" : "default",
     "DATA_SOURCE_URL" : "",
     "githubToken": "",
-    "MONGO_URL": "localhost:27017"
+    "MONGO_URL": "35.188.103.252:27017",
+    "CYPRESS_MONGO_URL": "35.188.103.252:27017"
   }
 }
