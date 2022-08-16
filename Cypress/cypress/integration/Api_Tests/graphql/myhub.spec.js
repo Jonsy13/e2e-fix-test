@@ -340,7 +340,7 @@ describe("Testing myHub api", () => {
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body.data).to.eq("Successfully synced ChaosHub");
+      expect(res.body.data.syncChaosHub).to.eq("Successfully synced ChaosHub");
     });
   });
 
