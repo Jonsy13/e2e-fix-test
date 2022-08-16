@@ -500,7 +500,9 @@ Cypress.Commands.add("initialRBACSetup", (createAgent) => {
       });
     })
     .then((res) => {
-      cluster1Id = res.body.data.listClusters[0].clusterID
+      if (createAgent){
+        cluster1Id = res.body.data.listClusters[0].clusterID
+      }
       return {
         adminProjectId,
         project1Id,
